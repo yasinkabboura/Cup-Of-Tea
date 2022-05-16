@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" [routerLink]="'/home'">
+      <img src="assets/Cup%20of%20tea.png" style="height: 45px;width: 45px;">
+      </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active" aria-current="page" [routerLink]="'/home'">Home</a>
+        <a class="nav-link" [routerLink]="'/home/ask'">Askers</a>
+        <a class="nav-link" [routerLink]="'/home/give'">Givers</a>
+      </div>
+    </div>
+  </div>
+  <div class="nav-item dropdown mr-5" >
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <img src="assets/Cup%20of%20tea.png" alt="dropdown image" class="img-responsive rounded-circle " width="30px" height="30px">
+    </a>
+
+    <div class=" dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" *ngIf="currentUser!=null">
+      <a class="dropdown-item" [routerLink]="'/profile'">Profile</a>
+      <a class="dropdown-item" (click)="logou()">Deconnexion</a>
+    </div>
+
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" *ngIf="currentUser==null">
+      <a class="dropdown-item"  [routerLink]="'/login'">Connexion</a>
+      <a class="dropdown-item" [routerLink]="'/signup-complete'"> cree un compte</a>
+    </div>
+  </div>
+</nav>
+

@@ -1,0 +1,50 @@
+<div class="login-page">
+  <mat-card  *ngIf="showLogin" class="login-card">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="title">Connexion</div>
+        <div class="subtitle">Entrez vos identifiants!</div>
+        <br />
+        <mat-error *ngIf="loginInvalid">
+        </mat-error>
+        <mat-form-field class="full-width-input" style="margin-top: 0.5em;">
+          <input
+            matInput
+            placeholder="Email"
+            formControlName="username"
+            autocomplete="username"
+            required
+          />
+          <mat-error> Veuillez fournir une adresse email valide </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input">
+          <input
+            matInput
+            type="password"
+            placeholder="Password"
+            formControlName="password"
+            autocomplete="current-password"
+            required
+          />
+          <mat-error> Veuillez fournir un mot de passe valide </mat-error>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          style="margin-top: 1em; background-color: rgb(29, 161, 242)"
+          [disabled]="isLoading"
+        >
+          <div>
+            Connexion
+          </div>
+        </button>
+      </form>
+    </mat-card-content>
+    <br />
+    <div>
+      Première fois ici?
+      <a [routerLink]="'/signup-complete'">créer un compte</a>
+    </div>
+  </mat-card>
+
+</div>
