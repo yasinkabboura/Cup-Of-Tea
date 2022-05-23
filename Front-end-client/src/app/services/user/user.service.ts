@@ -68,11 +68,18 @@ export class UserService {
     const headers = { userId };
     return this.http.put<any>('http://' + this.link + '/put/mark-all-notifs-as-read', null, { headers });
   }
+  postQuoteOrRepost(body: any): Observable<any> {
+    return this.http.post<any>('http://' + this.link + '/post/repost', body);
+  }
 
   // @ts-ignore
   getUserProfile(username: string, userId): Observable<Array<Feed>> {
     const headers = { userId };
     return this.http.get<Array<Feed>>('http://' + this.link + '/get/user/' + username, { headers });
+  }
+  getConnections(userId: string): Observable<Array<UserMinified>> {
+    const headers = { userId };
+    return this.http.get<any>('http://' + this.link + '/get/connections', { headers });
   }
 
   /**

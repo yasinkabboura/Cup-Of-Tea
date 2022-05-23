@@ -1,0 +1,82 @@
+<div class="tweet-container" [routerLink]="['/feed',feed._id]" style="baseline-shift: 10px">
+  <ul class="timeline" >
+      <div class="timeline-body">
+        <div class="timeline-header">
+          <span class="userimage"><img *ngIf="feed.author.profile_pic != null && feed.author.profile_pic != 'null'" [src]="feed.author.profile_pic" alt="Image Source"></span>
+          <span class="username"><a href="javascript:;">{{feed.author.name}}</a> <small></small></span>
+        </div>
+        <div class="timeline-content">
+          <p [innerHtml]="feed.body">
+
+          </p>
+          <img class="image" *ngIf="feed.image != null && feed.image != 'null'" [src]="feed.image" alt="Image Source">
+        </div>
+        <div class="timeline-likes">
+
+        </div>
+        <div class="timeline-footer">
+          <div class="actions" *ngIf="feed.author.user_handle !== 'news_node'">
+            <div class="action-button like" [ngClass]="{ liked: feed.has_liked }"
+                 (click)="toggleLike(); $event.stopPropagation()">
+              <button
+                mat-icon-button
+                class="like-button"
+                aria-label="Example icon button with a home icon"
+              >
+                <mat-icon>favorite_border</mat-icon>
+              </button>
+              <div>{{feed.like_count}}</div>
+            </div>
+            <div class="action-button reply"  >
+              <button
+                mat-icon-button
+                class="reply-button"
+                aria-label="Example icon button with a home icon"
+              >
+                <mat-icon>insert_comment</mat-icon>
+              </button>
+              <div>{{feed.reply_count}}</div>
+            </div>
+
+
+            <div class="action-button repost" [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()" [ngClass]="{ reposted: feed.has_reposted }">
+              <button
+                mat-icon-button
+                class="repost-button"
+                aria-label="Example icon button with a home icon"
+              >
+                <mat-icon>repeat</mat-icon>
+              </button>
+              <div>{{feed.repost_count + feed.quote_count}}</div>
+            </div>
+        </div>
+        <div class="timeline-comment-box">
+          <div class="user"><img src="https://bootdey.com/img/Content/avatar/avatar3.png"></div>
+          <div class="input">
+            <form  #f="ngForm" (ngSubmit)="addComment()">
+              <div class="input-group">
+                <input type="text" name="comment" class="form-control rounded-corner" placeholder="Write a comment..." [(ngModel)]="comment" >
+                <span class="input-group-btn p-l-10">
+            <button class="btn btn-primary f-s-12 rounded-corner" type="submit" >Comment</button>
+                  </span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      </div>
+  </ul>
+</div>
+<mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="repost(); $event.stopPropagation()">
+        <mat-icon>repeat</mat-icon>
+        <span>Repost</span>
+    </button>
+    <button mat-menu-item (click)="openQuoteModal(); $event.stopPropagation()">
+        <mat-icon>create</mat-icon>
+        <span>Quote</span>
+    </button>
+</mat-menu>
+
+

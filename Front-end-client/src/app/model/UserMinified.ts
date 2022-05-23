@@ -1,6 +1,7 @@
 // tslint:disable:variable-name
 export class UserMinified {
-    _id: string;
+    id: string;
+    name:string;
     profile_pic: string;
     user_handle: string;
 }

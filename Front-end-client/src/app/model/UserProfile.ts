@@ -10,4 +10,9 @@ export class UserProfile {
     user_handle: string;
     bio: string;
     notification_count: number;
+  roles!: Array<string>;
+  get roleT(): Array<string> {
+    return this.roles;
+  }
+
 }
