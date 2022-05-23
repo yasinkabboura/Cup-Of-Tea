@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import {HttpClient,
+  HttpHeaders,
+  HttpErrorResponse,
+  HttpBackend, HttpContext} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { UserProfile } from '../../model/UserProfile';
 import { UserSignupInfo } from '../../model/UserSignupInfo';
+import {StorageService} from "../storage.service";
+import {Router} from "@angular/router";
+import {BYPASS_LOG} from "../authconfig.interceptor";
 
 
 @Injectable({
@@ -13,14 +19,14 @@ import { UserSignupInfo } from '../../model/UserSignupInfo';
 })
 export class AuthService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private storageService:StorageService,public router: Router) {
     const userStr = sessionStorage.getItem('user');
     if (userStr) {
       const userObj = JSON.parse(userStr);
       this.currentUser = userObj;
     }
   }
-
+  headers = new HttpHeaders().set('Content-Type', 'application/json');
   localLink = 'localhost:3000/api';
   link = this.localLink;
   currentUser!: UserProfile ;
@@ -35,55 +41,97 @@ export class AuthService {
     console.log(`Auth Service: ${message}`);
   }
 
-  // tslint:disable-next-line:variable-name
-  login(email_id: string, password: string): Observable<UserProfile> {
-    const body = {
-      email_id, password, timezone: 'EST'
-    };
-    return this.http.post<any>('http://' + this.link + '/post/login', body);
+  // Sign-up
+  signUp(user: UserProfile): Observable<any> {
+    let api = `${this.link}/register-user`;
+    return this.http.post(api, user).pipe(catchError(this.handleError));
   }
 
-  createUser(body: any): Observable<any> {
-    return this.http.post<any>('http://' + this.link + '/post/create-user', body);
+
+  // Sign-in
+  login(username:string, password:string) {
+    const body = {
+      "username": username,
+      "password":password
+    };
+    console.log(body)
+    return this.http
+      .post<any>(`${this.link}/login`, body,{ context: new HttpContext().set(BYPASS_LOG, true) })
+      .subscribe((res: any) => {
+        console.log("*********************************************")
+        console.log(res)
+        this.storageService.saveToken(res.accessT)
+        this.storageService.saveRefreshToken(res.refreshT);
+        var json = JSON.parse(res.user);
+        console.log(json)
+        this.currentUser = json;
+        this.storageService.saveUser(json);
+
+      });
   }
+
+
+  getToken() {
+    return this.storageService.getToken();
+  }
+  get isLoggedIn(): boolean {
+    let authToken = this.storageService.getToken();
+    return authToken !== null ? true : false;
+  }
+  doLogout() {
+    let removeToken = localStorage.removeItem('access_token');
+    if (removeToken == null) {
+      this.router.navigate(['log-in']);
+    }
+  }
+  // UserModel profile
+  getUserProfile(id: any): Observable<any> {
+    let api = `${this.link}/auth/profile/${id}`;
+    return this.http.get(api, { headers: this.headers }).pipe(
+      map((res) => {
+        return res || {};
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  refreshToken(token: string) {
+    // let header = new HttpHeaders().set("Authorization", 'Bearer ' + token);
+    // let headers = new HttpHeaders({ 'Authorization': 'Bearer ' + token});
+    let heade =  {headers: new  HttpHeaders({ 'Authorization': 'Bearer ' + token})};
+    // @ts-ignore
+    return this.http.post(this.link + '/auth/refreshToken',{ headers: this.headers },heade);
+  }
+  getRole(){
+    console.log(this.storageService.getUser().appRoles)
+    return this.storageService.getUser().appRoles;
+  }
+
+  // Error
+  handleError(error: HttpErrorResponse) {
+    let msg = '';
+    if (error.error instanceof ErrorEvent) {
+      // client-side error
+      msg = error.error.message;
+    } else {
+      // server-side error
+      msg = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    return throwError(msg);
+  }
+
 
   changePassword(body: any, userId: string): Observable<any> {
      const headers = { userId };
      return this.http.put<any>('http://' + this.link + '/put/change-password', body, { headers });
   }
 
-  setUser(user: UserProfile) {
-     this.currentUser = user;
-  }
 
   setNotificationCount(count: number) {
     this.currentUser.notification_count = count;
     sessionStorage.setItem('user', JSON.stringify(this.currentUser));
   }
 
-  setSignUpInfo(user: UserSignupInfo) {
-    this.currentUserSignUpInfo = user;
-  }
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      AuthService.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
 
 
 }
