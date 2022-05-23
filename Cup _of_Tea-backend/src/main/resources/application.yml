@@ -1,0 +1,28 @@
+
+jwt:
+  secret: 'tFr5IaiLr7jTBYDkwvExXGzTSrKR55ozEsjRw619Hfy9MZi9SGnsC4CQsRov5dIuWWCP2qaz0nQROza8'
+
+server:
+  port: 8080
+#  error:
+#    whitelabel:
+#      enabled: false
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/supportportal?createDatabaseIfNotExist=true
+    username: root
+    password:
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+
