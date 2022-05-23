@@ -27,7 +27,7 @@ export class AuthService {
     }
   }
   headers = new HttpHeaders().set('Content-Type', 'application/json');
-  localLink = 'localhost:3000/api';
+  localLink = 'http://localhost:8085';
   link = this.localLink;
   currentUser!: UserProfile ;
   currentUserSignUpInfo!: UserSignupInfo ;
@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   // Sign-up
-  signUp(user: UserProfile): Observable<any> {
+  createUser(user: any): Observable<any> {
     let api = `${this.link}/register-user`;
     return this.http.post(api, user).pipe(catchError(this.handleError));
   }
