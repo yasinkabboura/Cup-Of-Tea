@@ -207,7 +207,7 @@ router.post("/sendmessage", (req, res) => {
   
   const mailOption = {
     from: email,
-    to: `${EMAIL}@gmail.com`,
+    to: `${process.env.EMAIL}@gmail.com`,
     subject: `Review from ${name}`,
     text: message,
   };
