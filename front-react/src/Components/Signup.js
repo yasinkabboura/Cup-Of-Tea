@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../css/newSignup.css";
 import axios from "axios";
-import Navbar from "../Components/Navbar";
+//import Navbar from "../Components/Navbar";
 
 export default class Signup extends Component {
   constructor() {
